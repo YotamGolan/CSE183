@@ -1,0 +1,9 @@
+{
+        "name": "Submissions",
+        "user": "userID",
+        "x": "xCoord",
+        "y": "yCoord",
+        "r": "rValue",
+        "g": "gValue",
+        "b": "bValue"
+}
