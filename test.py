@@ -19,7 +19,7 @@ cnxn = mysql.connector.connect(**config)
 cursor = cnxn.cursor()
 
 cursor.execute(
-    "DESCRIBE Submissions;"
+    "DESCRIBE Users;"
 )
 
 out = cursor.fetchall()

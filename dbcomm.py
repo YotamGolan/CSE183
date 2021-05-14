@@ -11,8 +11,12 @@ class DBComm:
     def __init__(self, user, password, database):
         # Load the format of the submissions table
         file = open('data/subtable.json')
-        subtable = json.load(file)
+        self.subtable = json.load(file)
         
+        # Load the format for the users table
+        file = open('data/userstable.json')
+        self.userstable = json.load(file)
+
         # Connect to the database and create a cursor object
         config = self.__createConfig(user, password, database)
         self.cnxn = mysql.connector.connect(**config)
@@ -35,23 +39,37 @@ class DBComm:
         # Close the connection
         self.cnxn.close()
         del self.cnxn
-    
-    def insertPixel(self, user, x, y, r, g, b):
-        if (cnxn):
-            cursor.execute (
-                "INSERT INTO {} ({}, {}, {}, {}, {}, {})".format(subtable['name'], subtable['user'], subtable['x'], subtable['y'], subtable['r'], subtable['g'], subtable['b']) + "VALUES ({}, {}, {}, {}, {}, {});".format(user, x, y, r, g, b)
+   
+
+    def insertUser(self, userID, firstName, lastName, pixelCount):
+        if (self.cnxn):
+            print(f"INSERT INTO {self.userstable['name']} ({self.userstable['user']}, {self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ({userID}, '{firstName}', '{lastName}', {pixelCount});")
+            self.cursor.execute (
+                f"INSERT INTO {self.userstable['name']} ({self.userstable['user']}, {self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ({userID}, '{firstName}', '{lastName}', {pixelCount});"
             )
-            cnxn.commit()
+            self.cnxn.commit()
+        else:
+            print('[DBComm.insertPixel]: Tried to insert but connection was closed')
+
+ 
+
+    def insertPixel(self, user, x, y, r, g, b):
+        if (self.cnxn):
+            print(f"INSERT INTO {self.subtable['name']} ({self.subtable['user']}, {self.subtable['x']}, {self.subtable['y']}, {self.subtable['r']}, {self.subtable['g']}, {self.subtable['b']}) VALUES ({user}, {x}, {y}, {r}, {g}, {b});")
+            self.cursor.execute (
+                f"INSERT INTO {self.subtable['name']} ({self.subtable['user']}, {self.subtable['x']}, {self.subtable['y']}, {self.subtable['r']}, {self.subtable['g']}, {self.subtable['b']}) VALUES ({user}, {x}, {y}, {r}, {g}, {b});"
+            )
+            self.cnxn.commit()
         else:
             print('[DBComm.insertPixel]: Tried to insert but connection was closed')
 
     def selectPixelsByUser(self, user):
-        if (cnxn):
-            cursor.execute(
-                "SELECT * FROM {} WHERE {}='{}';".format(subtable['name'], subtable['user'], user)
+        if (self.cnxn):
+            self.cursor.execute(
+                f"SELECT * FROM {self.subtable['name']} WHERE {self.subtable['user']}={user};"
             )
 
-            out = cursor.fetchall()
+            out = self.cursor.fetchall()
             return out
         else:
             print('[DBComm.selectPixelsByUser]: Tried to select but connection was closed')
