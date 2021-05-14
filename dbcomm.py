@@ -3,10 +3,6 @@ from mysql.connector.constants import ClientFlag
 import json
 
 class DBComm:
-    
-    cnxn = None
-    cursor = None
-    subtable = None
 
     def __init__(self, user, password, database):
         # Load the format of the submissions table
