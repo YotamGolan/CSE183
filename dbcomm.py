@@ -74,3 +74,25 @@ class DBComm:
         else:
             print('[DBComm.selectPixelsByUser]: Tried to select but connection was closed')
 
+
+    def selectUserData(self, user):
+        if (self.cnxn):
+            self.cursor.execute(
+                f"SELECT * FROM {self.userstable['name']} WHERE {self.userstable['user']}={user};"
+            )
+
+            out = self.cursor.fetchall()
+            return out
+        else:
+            print('[DBComm.selectUserData]: Tried to select but connection was closed')
+
+    def selectAllUserData(self):
+        if (self.cnxn):
+            self.cursor.execute(
+                f"SELECT * FROM {self.subtable['name']};"
+            )
+
+            out = self.cursor.fetchall()
+            return out
+        else:
+            print('[DBComm.selectAllUserData]: Tried to select but connection was closed') 
