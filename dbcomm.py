@@ -5,18 +5,7 @@ import json
 class DBComm:
 
     def __init__(self, user, password, database):
-        # Load the format of the submissions table
-        file = open('data/subtable.json')
-        self.subtable = json.load(file)
-        
-        # Load the format for the users table
-        file = open('data/userstable.json')
-        self.userstable = json.load(file)
-
-        # Connect to the database and create a cursor object
-        config = self.__createConfig(user, password, database)
-        self.cnxn = mysql.connector.connect(**config)
-        self.cursor = self.cnxn.cursor()
+        self.connect(user, password, database)
 
     def __createConfig(self, user, password, database):
         # Load the format of the connection config
@@ -30,6 +19,20 @@ class DBComm:
         config['database'] = database
         
         return config
+    
+    def connect(self, user, password, database):
+        # Load the format of the submissions table
+        file = open('data/subtable.json')
+        self.subtable = json.load(file)
+        
+        # Load the format for the users table
+        file = open('data/userstable.json')
+        self.userstable = json.load(file)
+
+        # Connect to the database and create a cursor object
+        config = self.__createConfig(user, password, database)
+        self.cnxn = mysql.connector.connect(**config)
+        self.cursor = self.cnxn.cursor()
 
     def close(self):
         # Close the connection
@@ -45,7 +48,7 @@ class DBComm:
             )
             self.cnxn.commit()
         else:
-            print('[DBComm.insertPixel]: Tried to insert but connection was closed')
+            print('[DBComm.insertUser]: Tried to insert but connection was closed')
 
  
 
