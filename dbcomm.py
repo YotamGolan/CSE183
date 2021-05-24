@@ -94,4 +94,6 @@ class DBComm:
             out = self.cursor.fetchall()
             return out
         else:
-            print('[DBComm.selectAllUserData]: Tried to select but connection was closed') 
+            print('[DBComm.selectAllUserData]: Tried to select but connection was closed')
+
+    

@@ -26,5 +26,13 @@ out = cursor.fetchall()
 for row in out:
     print(row)
 
+
+cursor.execute(
+    "DESCRIBE Submissions;"
+)
+
+out = cursor.fetchall()
+for row in out:
+    print(row)
 # close the connection
 cnxn.close()
