@@ -43,7 +43,7 @@ class DBComm:
     def insertUser(self, userID, firstName, lastName, pixelCount):
         if (self.cnxn):
             self.cursor.execute (
-                f"INSERT INTO {self.userstable['name']} ({self.userstable['user']}, {self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ({userID}, '{firstName}', '{lastName}', {pixelCount});"
+                f"INSERT INTO {self.userstable['name']} ({self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ('{firstName}', '{lastName}', {pixelCount});"
             )
             self.cnxn.commit()
         else:
