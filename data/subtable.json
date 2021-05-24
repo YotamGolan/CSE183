@@ -1,6 +1,7 @@
 {
         "name": "Submissions",
-        "user": "userID",
+        "id": "submissionID",
+	"user": "userID",
         "x": "xCoord",
         "y": "yCoord",
         "r": "rValue",

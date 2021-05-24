@@ -19,20 +19,20 @@ cnxn = mysql.connector.connect(**config)
 cursor = cnxn.cursor()
 
 cursor.execute(
-    "DESCRIBE Users;"
-)
-
-out = cursor.fetchall()
-for row in out:
-    print(row)
-
-
-cursor.execute(
     "DESCRIBE Submissions;"
 )
 
 out = cursor.fetchall()
 for row in out:
     print(row)
+
+
+#cursor.execute(
+#    "DESCRIBE Submissions;"
+#)
+
+#out = cursor.fetchall()
+#for row in out:
+#    print(row)
 # close the connection
 cnxn.close()
