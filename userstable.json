@@ -1,0 +1,7 @@
+{
+	"name": "Users",
+	"user": "userID",
+	"first": "firstName",
+	"last": "lastName",
+	"pixels": "pixelCount"
+}

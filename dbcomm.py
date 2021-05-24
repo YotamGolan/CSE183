@@ -1,16 +1,19 @@
 import mysql.connector
 from mysql.connector.constants import ClientFlag
 import json
+import os
 
+APP_FOLDER = os.path.dirname(__file__)
 class DBComm:
+    
 
     def __init__(self, user, password, database):
         self.connect(user, password, database)
 
     def __createConfig(self, user, password, database):
         # Load the format of the connection config
-        file = open('data/config.json')
-        config = json.load(file)
+        file = os.path.join(APP_FOLDER, "data", "config.json")
+        config = json.load(open(file))
         
         # Add the necessary parameters
         config['client_flags'] = [ClientFlag.SSL]
@@ -22,15 +25,16 @@ class DBComm:
     
     def connect(self, user, password, database):
         # Load the format of the submissions table
-        file = open('data/subtable.json')
-        self.subtable = json.load(file)
+        file = os.path.join(APP_FOLDER, "data", "subtable.json")
+        self.subtable = json.load(open(file))
         
         # Load the format for the users table
-        file = open('data/userstable.json')
-        self.userstable = json.load(file)
+        file = os.path.join(APP_FOLDER, "data", "userstable.json")
+        self.userstable = json.load(open(file))
 
         # Connect to the database and create a cursor object
         config = self.__createConfig(user, password, database)
+        print(config)
         self.cnxn = mysql.connector.connect(**config)
         self.cursor = self.cnxn.cursor()
 
