@@ -1,0 +1,34 @@
+[[extend 'layout.html']]
+
+<div id="vue-target">
+    <h1>Drawing</h1>
+    <canvas id="myCanvas" width="500" height="500" @mousedown="handleMouseDown"></canvas>
+    <label for="colorWell">Color Picker:</label>
+    <input class="input" type="color" id="colorWell" value="#0000ff">
+<!--    <article class="media">-->
+<!--        <textarea class="textarea" v-model="r" placeholder="Add a comment..."></textarea>-->
+<!--        <textarea class="textarea" v-model="g" placeholder="Add a comment..."></textarea>-->
+<!--        <textarea class="textarea" v-model="b" placeholder="Add a comment..."></textarea>-->
+<!--    </article>-->
+    <p>Change Red</p>
+    <input class="input" v-model="r" placeholder="Enter Red Value...">
+    <p>Change Green</p>
+    <input class="input" v-model="g" placeholder="Enter Green Value...">
+    <p>Change Blue</p>
+    <input class="input" v-model="b" placeholder="Enter Blue Value...">
+</div>
+
+<style>
+#myCanvas {
+  border: 1px solid grey;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="js/index.js"></script>
+
+
+
+
+
+
