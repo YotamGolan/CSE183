@@ -6,10 +6,11 @@ import os
 APP_FOLDER = os.path.dirname(__file__)
 class DBComm:
     
-
+    #The class constructor, automatically connects to the database
     def __init__(self, user, password, database):
         self.connect(user, password, database)
 
+    #Creates a config (used by connect())
     def __createConfig(self, user, password, database):
         # Load the format of the connection config
         file = os.path.join(APP_FOLDER, "data", "config.json")
@@ -23,6 +24,7 @@ class DBComm:
         
         return config
     
+    #Connects to the database
     def connect(self, user, password, database):
         # Load the format of the submissions table
         file = os.path.join(APP_FOLDER, "data", "subtable.json")
@@ -39,12 +41,13 @@ class DBComm:
         self.cursor = self.cnxn.cursor()
         print('finished connect')
 
+    #Closes the connection
     def close(self):
         # Close the connection
         self.cnxn.close()
         del self.cnxn
    
-
+    #Inserts a user into the users table
     def insertUser(self, userID, firstName, lastName, pixelCount):
         if (self.cnxn):
             self.cursor.execute (
@@ -54,8 +57,7 @@ class DBComm:
         else:
             print('[DBComm.insertUser]: Tried to insert but connection was closed')
 
- 
-
+    #Inserts a pixel into the submissions table
     def insertPixel(self, user, x, y, r, g, b):
         if (self.cnxn):
             self.cursor.execute (
@@ -65,6 +67,7 @@ class DBComm:
         else:
             print('[DBComm.insertPixel]: Tried to insert but connection was closed')
 
+    #Selects and returns a list of all submissions table entries under one email
     def selectPixelsByUser(self, user):
         if (self.cnxn):
             self.cursor.execute(
@@ -76,11 +79,11 @@ class DBComm:
         else:
             print('[DBComm.selectPixelsByUser]: Tried to select but connection was closed')
 
-
-    def selectUserData(self, user):
+    #Selects and returns a single user data entry by email
+    def selectUserData(self, email):
         if (self.cnxn):
             self.cursor.execute(
-                f"SELECT * FROM {self.userstable['name']} WHERE {self.userstable['user']}={user};"
+                f"SELECT * FROM {self.userstable['name']} WHERE {self.userstable['email']}={email};"
             )
 
             out = self.cursor.fetchall()
@@ -88,6 +91,7 @@ class DBComm:
         else:
             print('[DBComm.selectUserData]: Tried to select but connection was closed')
 
+    #Selects and returns all data in the users table
     def selectAllUserData(self):
         if (self.cnxn):
             self.cursor.execute(
@@ -99,6 +103,7 @@ class DBComm:
         else:
             print('[DBComm.selectAllUserData]: Tried to select but connection was closed')
 
+    #Selects and returns all pixels >= a specified index (by submissionID)
     def selectPixelMatrix(self, index):
         out = None
         if (self.cnxn):
@@ -113,4 +118,3 @@ class DBComm:
             print('[DBComm.selectPixelMatrix]: Tried to select but connection was closed')
             
         return out
-
