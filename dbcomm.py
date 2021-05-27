@@ -34,7 +34,7 @@ class DBComm:
 
         # Connect to the database and create a cursor object
         config = self.__createConfig(user, password, database)
-        print(config)
+        # print(config)
         self.cnxn = mysql.connector.connect(**config)
         self.cursor = self.cnxn.cursor()
         print('finished connect')
