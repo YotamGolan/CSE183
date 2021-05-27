@@ -67,7 +67,7 @@ class DBComm:
         else:
             print('[DBComm.insertPixel]: Tried to insert but connection was closed')
 
-    #Selects and returns a list of all submissions table entries under one email
+    #Selects and returns a list of all submissions table entries under one userID
     def selectPixelsByUser(self, user):
         if (self.cnxn):
             self.cursor.execute(
