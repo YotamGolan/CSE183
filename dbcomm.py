@@ -2,18 +2,20 @@ import mysql.connector
 from mysql.connector.constants import ClientFlag
 import json
 
-class DBComm:
+import os
 
+APP_FOLDER = os.path.dirname(__file__)
+class DBComm:
     def __init__(self, user, password, database):
         self.connect(user, password, database)
 
     def __createConfig(self, user, password, database):
         # Load the format of the connection config
-        file = open('data/config.json')
-        config = json.load(file)
+        file = os.path.join(APP_FOLDER, "data", "config.json")
+        config = json.load(open(file))
         
         # Add the necessary parameters
-        config['client_flags'] = [ClientFlag.SSL]
+        #config['client_flags'] = [ClientFlag.SSL]
         config['user'] = user
         config['password'] = password
         config['database'] = database
@@ -22,34 +24,34 @@ class DBComm:
     
     def connect(self, user, password, database):
         # Load the format of the submissions table
-        file = open('data/subtable.json')
-        self.subtable = json.load(file)
+        file = os.path.join(APP_FOLDER, "data", "subtable.json")
+        self.subtable = json.load(open(file))
         
         # Load the format for the users table
-        file = open('data/userstable.json')
-        self.userstable = json.load(file)
+        file = os.path.join(APP_FOLDER, "data", "userstable.json")
+        self.userstable = json.load(open(file))
 
         # Connect to the database and create a cursor object
         config = self.__createConfig(user, password, database)
+        # print(config)
         self.cnxn = mysql.connector.connect(**config)
         self.cursor = self.cnxn.cursor()
+        print('finished connect')
 
     def close(self):
         # Close the connection
         self.cnxn.close()
         del self.cnxn
-   
 
-    def insertUser(self, userID, firstName, lastName, pixelCount):
+    #Inserts a user into the users table
+    def insertUser(self, email, firstName, lastName, pixelCount):
         if (self.cnxn):
             self.cursor.execute (
-                f"INSERT INTO {self.userstable['name']} ({self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ('{firstName}', '{lastName}', {pixelCount});"
+                f"INSERT INTO {self.userstable['name']} ({self.userstable['email']}, {self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ('{email}', '{firstName}', '{lastName}', {pixelCount});"
             )
             self.cnxn.commit()
         else:
             print('[DBComm.insertUser]: Tried to insert but connection was closed')
-
- 
 
     def insertPixel(self, user, x, y, r, g, b):
         if (self.cnxn):
@@ -71,15 +73,15 @@ class DBComm:
         else:
             print('[DBComm.selectPixelsByUser]: Tried to select but connection was closed')
 
-
-    def selectUserData(self, user):
+    def selectUserData(self, email):
         if (self.cnxn):
             self.cursor.execute(
-                f"SELECT * FROM {self.userstable['name']} WHERE {self.userstable['user']}={user};"
+                f"SELECT * FROM {self.userstable['name']} WHERE {self.userstable['email']}=\"{email}\";"
             )
 
             out = self.cursor.fetchall()
-            return out
+            u = out[0]
+            return u
         else:
             print('[DBComm.selectUserData]: Tried to select but connection was closed')
 

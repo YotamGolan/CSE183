@@ -1,11 +1,14 @@
 from dbcomm import DBComm
 
-dbcomm = DBComm('Mitchell', 'Mitchellpass123', 'canvasDB')
+dbcomm = DBComm('Yotam', '', 'canvasDB')
 print('connected')
 
-dbcomm.insertUser('John', 'Doe', 3)
+#dbcomm.insertUser(40, 'John', 'Doe', 3)
 
-dbcomm.insertPixel(40, 5, 10, 4, 5, 6)
+for i in range (100):
+    dbcomm.insertPixel(40, i+100, i+100, i+100, i+100, i+100)
+
+>>>>>>> main
 print('pixel inserted')
 
 out = dbcomm.selectPixelsByUser(40)
