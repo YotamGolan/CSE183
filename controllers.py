@@ -40,15 +40,15 @@ url_signer = URLSigner(session)
 def pil_to_dataurl(img):
     #converts PIL image to dataurl
     data = io.BytesIO()
-    img.save(data, "JPEG")
+    img.save(data, "png")
     data64 = base64.b64encode(data.getvalue())
-    return u'data:img/jpeg;base64,'+data64.decode('utf-8')
+    return u'data:img/png;base64,'+data64.decode('utf-8')
 
 @unauthenticated("index", "index.html")
 def index():
     commHolder = DBComm('Yotam','','canvasDB',)
     holder = commHolder.selectPixelMatrix(0)
-    width, height = 500, 500
+    width, height = 750, 750
     desc = (height, width, 3)
     mat = np.zeros(desc, dtype=np.uint8)
     for row in holder:
@@ -65,7 +65,7 @@ def index():
 def load_image():
     commHolder = DBComm('Yotam','','canvasDB',)
     holder = commHolder.selectPixelMatrix(0)
-    width, height = 500, 500
+    width, height = 750, 750
     desc = (height, width, 3)
     #a = np.array([255,255,255])
     #a = a.reshape(3,1)
@@ -93,3 +93,4 @@ def set_image():
     commHolder.insertPixel(id[0][0], x, y, r, g, b)
     message = "success"
     return dict(message=message)
+

@@ -22,6 +22,7 @@ let init = (app) => {
         y: 0,
         w: 0,
         h: 0,
+        pixel_count: 0,
         colorWell: null,
         color: "#0000ff",
     };
@@ -49,19 +50,21 @@ let init = (app) => {
             mouseY = e.offsetY;
             console.log(mouseX, mouseY, app.vue.r, app.vue.g, app.vue.b);
             // Put your mousedown stuff here
-            app.setPixel(mouseX, mouseY, app.vue.r, app.vue.g, app.vue.b);
-            axios.post(set_pixel_url, {
-                x: mouseX,
-                y: mouseY,
-                r: app.vue.r,
-                g: app.vue.g,
-                b: app.vue.b,
-            }).then(function (response){
-                imgObj.src = response.data.image;
-                imgObj.onload = function() {
-                    app.vue.canvas.drawImage(imgObj, 0, 0);
-                }
-            });// Add image load here
+            if((mouseX <= 750 && mouseX >= 0) && (mouseY <= 750 && mouseY >= 0)) {
+                app.setPixel(mouseX, mouseY, app.vue.r, app.vue.g, app.vue.b);
+                axios.post(set_pixel_url, {
+                    x: mouseX,
+                    y: mouseY,
+                    r: app.vue.r,
+                    g: app.vue.g,
+                    b: app.vue.b,
+                }).then(function (response){
+                    imgObj.src = response.data.image;
+                    imgObj.onload = function() {
+                        app.vue.canvas.drawImage(imgObj, 0, 0);
+                    }
+                });// Add image load here
+            }
     }
 
     app.watchColorPicker = function (event) {
