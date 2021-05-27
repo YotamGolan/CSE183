@@ -67,8 +67,6 @@ def load_image():
     holder = commHolder.selectPixelMatrix(0)
     width, height = 750, 750
     desc = (height, width, 3)
-    #a = np.array([255,255,255])
-    #a = a.reshape(3,1)
     mat = np.zeros(desc, dtype=np.uint8)
     for row in holder:
         mat[row[3], row[2]] = [row[4], row[5], row[6]]
@@ -87,9 +85,7 @@ def set_image():
     g = request.json.get('g')
     b = request.json.get('b')
     commHolder = DBComm('Yotam','','canvasDB',)
-    #print(x, y, r, g, b)
     id = commHolder.selectUserData('abc@gmail.com')
-    #print(id[0][0])
     commHolder.insertPixel(id[0][0], x, y, r, g, b)
     message = "success"
     return dict(message=message)

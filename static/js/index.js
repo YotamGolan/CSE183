@@ -118,6 +118,9 @@ let init = (app) => {
         });
     }
 
+    app.resetPage = function() {
+        location.reload();
+    }
 
     // This contains all the methods.
     app.methods = {
@@ -128,6 +131,7 @@ let init = (app) => {
         startup: app.startup,
         updateAll: app.updateAll,
         updateFirst: app.updateFirst,
+        resetPage: app.resetPage,
     };
 
     // This creates the Vue instance.
