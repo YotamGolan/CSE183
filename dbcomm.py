@@ -48,10 +48,10 @@ class DBComm:
         del self.cnxn
    
     #Inserts a user into the users table
-    def insertUser(self, userID, email, firstName, lastName, pixelCount):
+    def insertUser(self, email, firstName, lastName, pixelCount):
         if (self.cnxn):
             self.cursor.execute (
-                f"INSERT INTO {self.userstable['name']} ({self.userstable['user']}, {self.userstable['email']}, {self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ({userID}, '{email}', '{firstName}', '{lastName}', {pixelCount});"
+                f"INSERT INTO {self.userstable['name']} ({self.userstable['email']}, {self.userstable['first']}, {self.userstable['last']}, {self.userstable['pixels']}) VALUES ('{email}', '{firstName}', '{lastName}', {pixelCount});"
             )
             self.cnxn.commit()
         else:
