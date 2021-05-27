@@ -90,7 +90,7 @@ def set_image():
     #print(x, y, r, g, b)
     id = commHolder.selectUserData('abc@gmail.com')
     #print(id[0][0])
-    commHolder.insertPixel(id[0][0], x, y, r, g, b)
+    commHolder.insertPixel(id[0], x, y, r, g, b)
     message = "success"
     return dict(message=message)
 
