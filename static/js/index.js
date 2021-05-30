@@ -141,6 +141,9 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
+        
+        axios.post(add_user_url);
+        
         app.vue.c = document.getElementById("myCanvas");
         app.vue.canvas = app.vue.c.getContext('2d'); // link up recent data url here
         app.vue.w = app.vue.c.width;
