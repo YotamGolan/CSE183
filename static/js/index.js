@@ -10,21 +10,16 @@ let init = (app) => {
     // This is the Vue data.
     app.data = {
         // Complete as you see fit.
-        c: null,
         canvas: null,
-        //canvasOffset: $("#canvas").offset(),
-        //offsetX: canvasOffset.left,
-        //offsetY: canvasOffset.top,
-        r: 255,
-        g: 0,
-        b: 0,
-        x: 0,
-        y: 0,
+        objCanvas: null,
         w: 0,
         h: 0,
-        pixel_count: 0,
-        colorWell: null,
-        color: "#0000ff",
+        x: 0,
+        y: 0,
+        clr: 'black',
+        lineWidth: 2,
+        drawState: false,
+        counter: 0,
     };
 
     app.enumerate = (a) => {
@@ -34,100 +29,106 @@ let init = (app) => {
         return a;
     };
 
-    app.setPixel = function (x, y, red, green, blue) {
-            pixPos = ((~~x) + (~~y)) * 4;
-            var pxData = app.vue.canvas.getImageData(x, y, 1, 1);
-            pxData.data[0] = app.vue.r;
-            pxData.data[1] = app.vue.g;
-            pxData.data[2] = app.vue.b;
-            pxData.data[3] = 255;
-            app.vue.canvas.putImageData(pxData, x, y);
-    }
-
-    app.handleMouseDown = function (e) {
-            var imgObj = new Image();
-            mouseX = e.offsetX;
-            mouseY = e.offsetY;
-            console.log(mouseX, mouseY, app.vue.r, app.vue.g, app.vue.b);
-            // Put your mousedown stuff here
-            if((mouseX <= 750 && mouseX >= 0) && (mouseY <= 750 && mouseY >= 0)) {
-                app.setPixel(mouseX, mouseY, app.vue.r, app.vue.g, app.vue.b);
-                axios.post(set_pixel_url, {
-                    x: mouseX,
-                    y: mouseY,
-                    r: app.vue.r,
-                    g: app.vue.g,
-                    b: app.vue.b,
-                }).then(function (response){
-                    imgObj.src = response.data.image;
-                    imgObj.onload = function() {
-                        app.vue.canvas.drawImage(imgObj, 0, 0);
-                    }
-                });// Add image load here
-            }
-    }
-
-    app.watchColorPicker = function (event) {
-        document.querySelectorAll("canvas").forEach(function(p) {
-            p.style.color = event.target.value;
-        });
-    }
-
-    app.startup = function () {
-        app.vue.colorWell = document.querySelector("#colorWell");
-        app.vue.colorWell.value = app.vue.color;
-        app.vue.colorWell.addEventListener("input", app.updateFirst, false);
-        app.vue.colorWell.addEventListener("change", app.updateAll, false);
-        app.vue.colorWell.select();
-    }
-
-    app.updateFirst = function (event) {
-        var p = document.querySelector("canvas");
-
-        if (p) {
-            p.style.color = event.target.value;
-            console.log(p.style.color);
+    app.drawline = function(e) {
+        if(app.vue.drawState) {
+            app.draw(app.vue.x, app.vue.y, e.offsetX, e.offsetY);
+            app.vue.x = e.offsetX;
+            app.vue.y = e.offsetY;
         }
     }
 
-    app.updateAll = function (event) {
-        document.querySelectorAll("canvas").forEach(function(p) {
-            p.style.color = event.target.value;
-            var count = 4;
-            app.vue.r = app.vue.g = app.vue.b = 0;
-            while(p.style.color[count] != ',') {
-                app.vue.r += p.style.color[count];
-                console.log(count);
-                count++;
-            }
-            console.log(count);
-            count += 2;
-            while(p.style.color[count] != ',') {
-                app.vue.g += p.style.color[count];
-                count++;
-            }
-            count += 2;
-            while(p.style.color[count] != ')') {
-                app.vue.b += p.style.color[count];
-                count++;
-            }
-            app.vue.r = parseInt(app.vue.r, 10);
-            app.vue.g = parseInt(app.vue.g, 10);
-            app.vue.b = parseInt(app.vue.b, 10);
-            console.log(app.vue.r, app.vue.g, app.vue.b);
-        });
+    app.draw = function (x1, y1, x2, y2) {
+        let ctx = app.vue.canvas;
+        ctx.beginPath();
+        ctx.lineWidth = app.vue.lineWidth;
+        ctx.strokeStyle = app.vue.clr;
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        axios.post
+        ctx.stroke();
+        ctx.closePath();
+        // add set interval for loading new drawing
     }
 
+    app.setGreen = function() {
+        app.vue.clr = "green";
+    }
+    app.setWhite = function() {
+        app.vue.clr = "white";
+    }
+    app.setYellow = function() {
+        app.vue.clr = "yellow";
+    }
+    app.setOrange = function() {
+        app.vue.clr = "orange";
+    }
+    app.setBlack = function() {
+        app.vue.clr = "black";
+    }
+    app.setBlue = function() {
+        app.vue.clr = "blue";
+    }
+    app.setRed = function() {
+        app.vue.clr = "red";
+    }
+    app.incrWidth = function() {
+        if(app.vue.lineWidth <= 13) {
+            app.vue.lineWidth = app.vue.lineWidth + 1;
+        }
+    }
+    app.decrWidth = function() {
+        if(app.vue.lineWidth >= 3) {
+            app.vue.lineWidth = app.vue.lineWidth - 1;
+        }
+    }
 
+    app.clear = function() {
+        var m = confirm("Want to clear");
+        if (m) {
+            app.vue.canvas.clearRect(0, 0, app.vue.w, app.vue.h);
+            document.getElementById("canvasimg").style.display = "none";
+        }
+    }
+
+    app.startDrawing = function(e) {
+        app.vue.x = e.offsetX;
+        app.vue.y = e.offsetY;
+        app.vue.drawState = true;
+    }
+
+    app.save = function() {
+        //document.getElementById("canvasimg").style.border = "2px solid";
+        var dataURL = app.vue.objCanvas.toDataURL();
+        //document.getElementById("canvasimg").src = dataURL;
+        //document.getElementById("canvasimg").style.display = "inline";
+    }
+
+    app.stopDrawing = function(e) {
+      if (app.vue.drawState) {
+        app.drawline(e);
+        app.vue.x = 0;
+        app.vue.y = 0;
+        app.vue.drawState = false;
+      }
+    }
     // This contains all the methods.
     app.methods = {
         // Complete as you see fit.
-        setPixel: app.setPixel,
-        handleMouseDown: app.handleMouseDown,
-        watchColorPicker: app.watchColorPicker,
-        startup: app.startup,
-        updateAll: app.updateAll,
-        updateFirst: app.updateFirst,
+        drawline: app.drawline,
+        draw: app.draw,
+        startDrawing: app.startDrawing,
+        stopDrawing: app.stopDrawing,
+        setGreen: app.setGreen,
+        setWhite: app.setWhite,
+        setOrange: app.setOrange,
+        setYellow: app.setYellow,
+        setBlack: app.setBlack,
+        setRed: app.setRed,
+        setBlue: app.setBlue,
+        incrWidth: app.incrWidth,
+        decrWidth: app.decrWidth,
+        clear: app.clear,
+        save: app.save,
     };
 
     // This creates the Vue instance.
@@ -141,26 +142,13 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
-        app.vue.c = document.getElementById("myCanvas");
-        app.vue.canvas = app.vue.c.getContext('2d'); // link up recent data url here
-        app.vue.w = app.vue.c.width;
-        app.vue.h = app.vue.c.height;
+        var c = document.getElementById("myCanvas");
+        app.vue.objCanvas = c;
+        app.vue.w = c.width;
+        app.vue.h = c.height;
+        //axios.get() get data url
+        app.vue.canvas = c.getContext('2d'); // link up recent data url here
 
-        //var imgPath = 'images/download.png';
-        var imgObj = new Image();
-        /*imgObj.src = imgPath;
-        imgObj.onload = function() {
-            app.vue.canvas.drawImage(imgObj, 0, 0);
-        }*/
-        axios.get(load_image_url).then(function (response) {
-            imgObj.src = response.data.image;
-        });
-
-        console.log(imgObj.src);
-        imgObj.onload = function() {
-            app.vue.canvas.drawImage(imgObj, 0, 0);
-        }
-        app.startup();
     };
 
     // Call to the initializer.

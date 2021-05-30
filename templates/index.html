@@ -1,15 +1,22 @@
 [[extend 'layout.html']]
 
 <div id="vue-target">
-    <canvas id="myCanvas" width="750" height="750" @mousedown="handleMouseDown"></canvas>
-    <br>
-    <label style="color:#ffffff" for="colorWell">Color Picker:</label>
-    <input style="background-color:#0a0a0a" class="input" type="color" id="colorWell" value="#0000ff">
-<!--    <article class="media">-->
-<!--        <textarea class="textarea" v-model="r" placeholder="Add a comment..."></textarea>-->
-<!--        <textarea class="textarea" v-model="g" placeholder="Add a comment..."></textarea>-->
-<!--        <textarea class="textarea" v-model="b" placeholder="Add a comment..."></textarea>-->
-<!--    </article>-->
+    <h1>Drawing</h1>
+    <canvas id="myCanvas" width="800" height="500" @mousemove="drawline" @mousedown="startDrawing" @mouseup="stopDrawing"></canvas>
+    <span>{{x}}, {{y}}</span>
+
+    <input type="submit" @click="setGreen" value="Green" class="button is-primary">
+    <input type="submit" @click="setBlue" value="Blue" class="button is-primary">
+    <input type="submit" @click="setYellow" value="Yellow" class="button is-primary">
+    <input type="submit" @click="setOrange" value="Orange" class="button is-primary">
+    <input type="submit" @click="setBlack" value="Black" class="button is-primary">
+    <input type="submit" @click="setRed" value="Red" class="button is-primary">
+    <input type="submit" @click="setWhite" value="White" class="button is-primary">
+    <input type="submit" @click="incrWidth" value="+ Line Width(Max 14)" class="button is-primary">
+    <input type="submit" @click="decrWidth" value="- Line Width(Min 2)" class="button is-primary">
+    <input type="submit" @click="clear" value="Clear" class="button is-primary">
+    <input type="submit" @click="save" value="Save" class="button is-primary">
+    <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
 </div>
 
 <style>
@@ -18,15 +25,8 @@
 }
 </style>
 
-[[block page_scripts]]
-<script>
-  let load_image_url = "[[=XML(load_image_url)]]";
-  let set_pixel_url = "[[=XML(set_pixel_url)]]";
-</script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 <script src="js/index.js"></script>
-[[end]]
-
 
 
 
