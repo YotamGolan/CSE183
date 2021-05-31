@@ -1,10 +1,19 @@
 [[extend 'layout.html']]
 
 <div class="section">
-    <a class="button is-link" href="[[=URL('index')]]">
-        <span class="icon"><i class="fa fa-backward"></i></span>
-        <span>Return to the Canvas</span>
-    </a>
+        <p>
+            <a class="button is-link" href="[[=URL('index')]]">
+                <span class="icon"><i class="fa fa-backward"></i></span>
+                <span>Return to the Global Canvas</span>
+            </a>
+        </p>    
+        <p>    
+            <a class="button is-link" href="[[=URL('private')]]">
+                <span class="icon"><i class="fa fa-forward"></i></span>
+                <span>Go to a Private Canvas</span>
+            </a>
+        </p>
+    
     <div class="container">
         <h1 style="color:#ffffff" class="title">Welcome to the profile page, [[=username]].</h1>
         
@@ -12,9 +21,12 @@
         
         <p style="color:#ffffff">Name: [[=firstname]] [[=lastname]]</p>
         
-        <a class="button is-link" href="[[=URL('auth/profile')]]">
-            
+        <!--<a class="button is-link" href="[[=URL('auth/profile')]]">
             <span>Edit Profile</span>
+        </a>-->
+        
+        <a class="button is-link" href="[[=URL('auth/change_password')]]">
+            <span>Change Password</span>
         </a>
         
         <br></br>

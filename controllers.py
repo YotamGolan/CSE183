@@ -167,5 +167,9 @@ def load_users_image():
     )
 
 
-
+# private line canvas
+@action('private')
+@action.uses(auth.user, url_signer, 'private.html')
+def private():
+    return dict()
 
