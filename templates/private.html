@@ -1,0 +1,30 @@
+[[extend 'layout.html']]
+
+<div id="vue-target">
+    <h1 style="color:#ffffff">Private Canvas</h1>
+    <canvas id="myCanvas" width="750" height="750" @mousemove="drawline" @mousedown="startDrawing" @mouseup="stopDrawing"></canvas>
+    <span>{{x}}, {{y}}</span>
+
+    <input type="submit" @click="setGreen" value="Green" class="button is-primary">
+    <input type="submit" @click="setBlue" value="Blue" class="button is-primary">
+    <input type="submit" @click="setYellow" value="Yellow" class="button is-primary">
+    <input type="submit" @click="setOrange" value="Orange" class="button is-primary">
+    <input type="submit" @click="setBlack" value="Black" class="button is-primary">
+    <input type="submit" @click="setRed" value="Red" class="button is-primary">
+    <input type="submit" @click="setWhite" value="White" class="button is-primary">
+    <input type="submit" @click="incrWidth" value="+ Line Width(Max 14)" class="button is-primary">
+    <input type="submit" @click="decrWidth" value="- Line Width(Min 2)" class="button is-primary">
+    <input type="submit" @click="clear" value="Clear" class="button is-primary">
+    <input type="submit" @click="download" value="Download Image" class="button is-primary">
+    <img id="canvasimg" style="position:absolute;top:10%;left:52%;" style="display:none;">
+</div>
+
+<style>
+#myCanvas {
+  border: 1px solid grey;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="js/private.js"></script>
+

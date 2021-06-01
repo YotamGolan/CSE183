@@ -33,6 +33,17 @@ let init = (app) => {
         a.map((e) => {e._idx = k++;});
         return a;
     };
+    
+    app.download = function () {
+        image = app.vue.c.toDataURL();
+        link = document.createElement( 'a' );
+        link.download = 'image.png'; 
+        link.href = image;
+        document.body.appendChild( link );
+        link.click();
+        document.body.removeChild( link );
+    };
+
 
     app.setPixel = function (x, y, red, green, blue) {
             pixPos = ((~~x) + (~~y)) * 4;
@@ -58,17 +69,17 @@ let init = (app) => {
                     r: app.vue.r,
                     g: app.vue.g,
                     b: app.vue.b,
-                }).then(function (response){
-                    imgObj.src = response.data.image;
+                /*}).then(function (response){          // the set pixel in controllers does not currently return an image
+                    imgObj.src = response.data.image;   // this was causing the strange errors in the console
                     imgObj.onload = function() {
                         app.vue.canvas.drawImage(imgObj, 0, 0);
-                    }
+                    }*/
                 });// Add image load here
             }
     }
 
     app.watchColorPicker = function (event) {
-        document.querySelectorAll("canvas").forEach(function(p) {
+        document.querySelectorAll("myCanvas").forEach(function(p) {
             p.style.color = event.target.value;
         });
     }
@@ -82,7 +93,7 @@ let init = (app) => {
     }
 
     app.updateFirst = function (event) {
-        var p = document.querySelector("canvas");
+        var p = document.querySelector("myCanvas");
 
         if (p) {
             p.style.color = event.target.value;
@@ -128,6 +139,7 @@ let init = (app) => {
         startup: app.startup,
         updateAll: app.updateAll,
         updateFirst: app.updateFirst,
+        download: app.download,
     };
 
     // This creates the Vue instance.
@@ -141,6 +153,9 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
+        
+        axios.post(add_user_url);
+        
         app.vue.c = document.getElementById("myCanvas");
         app.vue.canvas = app.vue.c.getContext('2d'); // link up recent data url here
         app.vue.w = app.vue.c.width;
