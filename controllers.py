@@ -111,13 +111,14 @@ def set_image():
     b = request.json.get('b')
     commHolder = DBComm('Yotam','','canvasDB',)
     currentID = commHolder.getLargestID()
-    print(currentID)
-    if(currentID%500 == 0):
-        checkpoint()
+    #print(currentID)
+    
     #print(x, y, r, g, b)
     id = commHolder.selectUserData(user_email)
     #print(id[0][0])
     commHolder.insertPixel(id[0], x, y, r, g, b)
+    if(currentID%500 == 0):
+        checkpoint()
     message = "success"
     return dict(message=message)
 
