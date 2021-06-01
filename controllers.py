@@ -219,15 +219,14 @@ def checkpoint():
 def retrieveCheckpoint(checkpointID = None):
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(GCS_KEY)
     client = storage.Client(credentials=credentials, project='collabcanvas')
+    bucket = client.get_bucket('checkpointing')
 
     if(checkpointID==None):
         commHolder = DBComm('Yotam','','canvasDB')
         checkpointID = commHolder.getLargestID()
-    print(checkpointID)
+        
     checkpointID = (int(math.floor(checkpointID / 500.0)) * 500) 
     picName = 'checkpoint' + str(checkpointID) +'.png'
-    print(picName)
-    bucket = client.get_bucket('checkpointing')
     try: 
         blob = bucket.blob(picName)
         blob.download_to_filename(picName)
