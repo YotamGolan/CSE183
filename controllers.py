@@ -69,7 +69,6 @@ def index():
         mat[row[2], row[3]] = [row[4],row[5],row[6]]
     i = Image.fromarray(mat, "RGB")
     #i.show()
-    retrieveCheckpoint()
     return dict(
         load_image_url=URL('load_image', signer=url_signer),
         set_pixel_url=URL('set_pixel', signer=url_signer),
