@@ -36,7 +36,7 @@ class DBComm:
         # print(config)
         self.cnxn = mysql.connector.connect(**config)
         self.cursor = self.cnxn.cursor()
-        print('finished connect')
+        #print('finished connect')
 
     def close(self):
         # Close the connection
@@ -110,4 +110,18 @@ class DBComm:
             print('[DBComm.selectPixelMatrix]: Tried to select but connection was closed')
             
         return out
+
+    def getLargestID(self):
+        if (self.cnxn):
+            try:
+                self.cursor.execute(
+                    f"SELECT MAX({self.subtable['id']}) FROM {self.subtable['name']}"
+                )
+                out = self.cursor.fetchall()
+            except:
+               print("[DBComm.getLargestID]: Could not select with those parameters")
+        else:
+            print('[DBComm.getLargestID]: Tried to select but connection was closed')
+            
+        return out[0][0]
 

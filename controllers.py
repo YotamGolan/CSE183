@@ -34,6 +34,16 @@ from py4web.utils.url_signer import URLSigner
 from PIL import Image
 import io
 import base64
+from gcloud import storage
+from oauth2client.service_account import ServiceAccountCredentials
+import math
+from numpy import array
+
+from nqgcs import NQGCS
+BUCKET = '/checkpointing'
+GCS_KEY_PATH = os.path.join(APP_FOLDER, 'private/gcs_keys.json')
+with open(GCS_KEY_PATH) as gcs_key_f:
+    GCS_KEY = json.load(gcs_key_f)
 
 url_signer = URLSigner(session)
 
@@ -59,26 +69,33 @@ def index():
         mat[row[2], row[3]] = [row[4],row[5],row[6]]
     i = Image.fromarray(mat, "RGB")
     #i.show()
+    retrieveCheckpoint()
     return dict(
         load_image_url=URL('load_image', signer=url_signer),
         set_pixel_url=URL('set_pixel', signer=url_signer),
         add_user_url=URL('add_user', signer=url_signer),
     )
 
-@action('load_image')
-@action.uses(url_signer.verify())
-def load_image():
+def createImage():
     commHolder = DBComm('Yotam','','canvasDB',)
-    holder = commHolder.selectPixelMatrix(0)
-    width, height = 750, 750
-    desc = (height, width, 3)
-    #a = np.array([255,255,255])
-    #a = a.reshape(3,1)
-    mat = np.zeros(desc, dtype=np.uint8)
+
+    checkpointID = commHolder.getLargestID()
+    checkpointID = int(math.floor(checkpointID / 500.0)) * 500
+    
+
+    holder = commHolder.selectPixelMatrix(checkpointID)
+
+    mat = retrieveCheckpoint()
+    
     for row in holder:
         mat[row[3], row[2]] = [row[4], row[5], row[6]]
     i = Image.fromarray(mat, "RGB")
-    #i.show()
+    return i
+
+@action('load_image')
+@action.uses(url_signer.verify())
+def load_image():
+    i = createImage()
     return dict(
         image=pil_to_dataurl(i),
     )
@@ -93,6 +110,10 @@ def set_image():
     g = request.json.get('g')
     b = request.json.get('b')
     commHolder = DBComm('Yotam','','canvasDB',)
+    currentID = commHolder.getLargestID()
+    print(currentID)
+    if(currentID%500 == 0):
+        checkpoint()
     #print(x, y, r, g, b)
     id = commHolder.selectUserData(user_email)
     #print(id[0][0])
@@ -147,10 +168,10 @@ def profile():
 def load_users_image():
     commHolder = DBComm('Yotam','','canvasDB',)
     user_email = get_user_email()
-    print(user_email)
+    #print(user_email)
     # NEED TO GET ACTUAL USERS INSERTED INTO THE USER TABLE
     user_id = commHolder.selectUserData(user_email)[0]
-    print(user_id)
+    #print(user_id)
     
     holder = commHolder.selectPixelsByUser(user_id)
     
@@ -173,3 +194,60 @@ def load_users_image():
 def private():
     return dict()
 
+def checkpoint():
+    #print('CHECKPOINTING')
+    
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(GCS_KEY)
+    client = storage.Client(credentials=credentials, project='collabcanvas')
+    bucket = client.get_bucket('checkpointing')
+    commHolder = DBComm('Yotam','','canvasDB')
+
+    #tempImage = createImage()
+    #tempImage.show()
+
+    checkpointID = commHolder.getLargestID()
+    checkpointID = int(math.floor(checkpointID / 500.0)) * 500
+    picName = 'checkpoint'+str(checkpointID)+'.png'
+
+    holder = commHolder.selectPixelMatrix(0)
+    width, height = 750, 750
+    desc = (height, width, 3)
+    matrix = np.zeros(desc, dtype=np.uint8)
+
+    for row in holder:
+        matrix[row[3], row[2]] = [row[4], row[5], row[6]]
+    tempImage = Image.fromarray(matrix, "RGB")
+
+
+    tempImage.save(picName)
+    blob = bucket.blob(picName)
+    blob.upload_from_filename(picName)
+    os.remove(picName) 
+    return()
+
+def retrieveCheckpoint():
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(GCS_KEY)
+    client = storage.Client(credentials=credentials, project='collabcanvas')
+
+    commHolder = DBComm('Yotam','','canvasDB')
+    checkpointID = commHolder.getLargestID()
+    print(checkpointID)
+    checkpointID = (int(math.floor(checkpointID / 500.0)) * 500) 
+    #print(checkpointID)
+    picName = 'checkpoint' + str(checkpointID) +'.png'
+    print(picName)
+    bucket = client.get_bucket('checkpointing')
+    try: 
+        blob = bucket.blob(picName)
+        blob.download_to_filename(picName)
+        image = Image.open(picName)  
+        #image.show()
+        picArray = array(image)
+        image.close()
+        os.remove(picName)
+    except:
+        width, height = 750, 750
+        desc = (height, width, 3)
+        picArray = np.zeros(desc, dtype=np.uint8)
+
+    return(picArray)
