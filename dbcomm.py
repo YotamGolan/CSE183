@@ -62,14 +62,29 @@ class DBComm:
         else:
             print('[DBComm.insertPixel]: Tried to insert but connection was closed')
 
-    def updatePixelCount(self, user, n):
+    def setPixelCount(self, user, n):
         if (self.cnxn):
-            self.cursor.execute (
-                f"UPDATE {self.userstable['name']} SET {self.userstable['pixels']} = {n} WHERE {self.userstable['user']} = {user}"
-            )
-            self.cnxn.commit()
+            try:
+                self.cursor.execute (
+                    f"UPDATE {self.userstable['name']} SET {self.userstable['pixels']} = {n} WHERE {self.userstable['user']} = {user};"
+                )
+                self.cnxn.commit()
+            except:
+                print("[DBComm.setPixelCount]: Unable to find an entry for the specified userID")
         else:
-            print("[DBComm.updatePixelCount]: Tried to update but the connection was closed")
+            print("[DBComm.setPixelCount]: Tried to update but the connection was closed")
+
+    def decrementPixelCount(self, user):
+        if (self.cnxn):
+            try:
+                self.cursor.execute (
+                    f"UPDATE {self.userstable['name']} SET {self.userstable['pixels']} = {self.userstable['pixels']} - 1 WHERE {self.userstable['user']} = {user};"
+                )
+                self.cnxn.commit()
+            except:
+                print("[DBComm.decrementPixelCount]: Unable to find an entry for the specified userID")
+        else:
+            print("[DBComm.decrementPixelCount]: Tried to decrement but the connection was closed")
 
     def selectPixelsByUser(self, user):
         if (self.cnxn):
