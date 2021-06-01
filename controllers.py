@@ -210,15 +210,11 @@ def checkpoint():
     checkpointID = int(math.floor(checkpointID / 500.0)) * 500
     picName = 'checkpoint'+str(checkpointID)+'.png'
 
-    holder = commHolder.selectPixelMatrix(0)
-    width, height = 750, 750
-    desc = (height, width, 3)
-    matrix = np.zeros(desc, dtype=np.uint8)
-
+    imgMatrix = retrieveCheckpoint(checkpointID = checkpointID-1)
+    holder = commHolder.selectPixelMatrix(checkpointID-3)
     for row in holder:
-        matrix[row[3], row[2]] = [row[4], row[5], row[6]]
-    tempImage = Image.fromarray(matrix, "RGB")
-
+        imgMatrix[row[3], row[2]] = [row[4], row[5], row[6]]
+    tempImage = Image.fromarray(imgMatrix, "RGB")
 
     tempImage.save(picName)
     blob = bucket.blob(picName)
@@ -226,12 +222,13 @@ def checkpoint():
     os.remove(picName) 
     return()
 
-def retrieveCheckpoint():
+def retrieveCheckpoint(checkpointID = None):
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(GCS_KEY)
     client = storage.Client(credentials=credentials, project='collabcanvas')
 
-    commHolder = DBComm('Yotam','','canvasDB')
-    checkpointID = commHolder.getLargestID()
+    if(checkpointID==None):
+        commHolder = DBComm('Yotam','','canvasDB')
+        checkpointID = commHolder.getLargestID()
     print(checkpointID)
     checkpointID = (int(math.floor(checkpointID / 500.0)) * 500) 
     #print(checkpointID)
