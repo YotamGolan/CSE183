@@ -196,15 +196,10 @@ def private():
     return dict()
 
 def checkpoint():
-    #print('CHECKPOINTING')
-    
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(GCS_KEY)
     client = storage.Client(credentials=credentials, project='collabcanvas')
     bucket = client.get_bucket('checkpointing')
     commHolder = DBComm('Yotam','','canvasDB')
-
-    #tempImage = createImage()
-    #tempImage.show()
 
     checkpointID = commHolder.getLargestID()
     checkpointID = int(math.floor(checkpointID / 500.0)) * 500
@@ -231,7 +226,6 @@ def retrieveCheckpoint(checkpointID = None):
         checkpointID = commHolder.getLargestID()
     print(checkpointID)
     checkpointID = (int(math.floor(checkpointID / 500.0)) * 500) 
-    #print(checkpointID)
     picName = 'checkpoint' + str(checkpointID) +'.png'
     print(picName)
     bucket = client.get_bucket('checkpointing')
@@ -239,7 +233,6 @@ def retrieveCheckpoint(checkpointID = None):
         blob = bucket.blob(picName)
         blob.download_to_filename(picName)
         image = Image.open(picName)  
-        #image.show()
         picArray = array(image)
         image.close()
         os.remove(picName)
