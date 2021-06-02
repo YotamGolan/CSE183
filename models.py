@@ -13,3 +13,14 @@ from pydal.validators import *
 #
 # db.commit()
 #
+
+db.define_table(
+    'upload',
+    Field('file_name'),
+    Field('file_type'),
+    Field('file_date'),
+    Field('file_path'),
+    Field('file_size', 'integer'),
+)
+
+db.commit()

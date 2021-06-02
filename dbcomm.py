@@ -1,12 +1,11 @@
 import mysql.connector
 from mysql.connector.constants import ClientFlag
 import json
+
 import os
 
 APP_FOLDER = os.path.dirname(__file__)
 class DBComm:
-    
-
     def __init__(self, user, password, database):
         self.connect(user, password, database)
 
@@ -34,16 +33,15 @@ class DBComm:
 
         # Connect to the database and create a cursor object
         config = self.__createConfig(user, password, database)
-        print(config)
+        # print(config)
         self.cnxn = mysql.connector.connect(**config)
         self.cursor = self.cnxn.cursor()
-        print('finished connect')
+        #print('finished connect')
 
     def close(self):
         # Close the connection
         self.cnxn.close()
         del self.cnxn
-   
 
     #Inserts a user into the users table
     def insertUser(self, email, firstName, lastName, pixelCount):
@@ -55,8 +53,6 @@ class DBComm:
         else:
             print('[DBComm.insertUser]: Tried to insert but connection was closed')
 
- 
-
     def insertPixel(self, user, x, y, r, g, b):
         if (self.cnxn):
             self.cursor.execute (
@@ -65,6 +61,30 @@ class DBComm:
             self.cnxn.commit()
         else:
             print('[DBComm.insertPixel]: Tried to insert but connection was closed')
+
+    def setPixelCount(self, user, n):
+        if (self.cnxn):
+            try:
+                self.cursor.execute (
+                    f"UPDATE {self.userstable['name']} SET {self.userstable['pixels']} = {n} WHERE {self.userstable['user']} = {user};"
+                )
+                self.cnxn.commit()
+            except:
+                print("[DBComm.setPixelCount]: Unable to find an entry for the specified userID")
+        else:
+            print("[DBComm.setPixelCount]: Tried to update but the connection was closed")
+
+    def decrementPixelCount(self, user):
+        if (self.cnxn):
+            try:
+                self.cursor.execute (
+                    f"UPDATE {self.userstable['name']} SET {self.userstable['pixels']} = {self.userstable['pixels']} - 1 WHERE {self.userstable['user']} = {user};"
+                )
+                self.cnxn.commit()
+            except:
+                print("[DBComm.decrementPixelCount]: Unable to find an entry for the specified userID")
+        else:
+            print("[DBComm.decrementPixelCount]: Tried to decrement but the connection was closed")
 
     def selectPixelsByUser(self, user):
         if (self.cnxn):
@@ -77,7 +97,6 @@ class DBComm:
         else:
             print('[DBComm.selectPixelsByUser]: Tried to select but connection was closed')
 
-
     def selectUserData(self, email):
         if (self.cnxn):
             self.cursor.execute(
@@ -85,7 +104,8 @@ class DBComm:
             )
 
             out = self.cursor.fetchall()
-            return out
+            u = out[0]
+            return u
         else:
             print('[DBComm.selectUserData]: Tried to select but connection was closed')
 
@@ -114,4 +134,18 @@ class DBComm:
             print('[DBComm.selectPixelMatrix]: Tried to select but connection was closed')
             
         return out
+
+    def getLargestID(self):
+        if (self.cnxn):
+            try:
+                self.cursor.execute(
+                    f"SELECT MAX({self.subtable['id']}) FROM {self.subtable['name']}"
+                )
+                out = self.cursor.fetchall()
+            except:
+               print("[DBComm.getLargestID]: Could not select with those parameters")
+        else:
+            print('[DBComm.getLargestID]: Tried to select but connection was closed')
+            
+        return out[0][0]
 

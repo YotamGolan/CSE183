@@ -33,6 +33,17 @@ let init = (app) => {
         a.map((e) => {e._idx = k++;});
         return a;
     };
+    
+    app.download = function () {
+        image = app.vue.c.toDataURL();
+        link = document.createElement( 'a' );
+        link.download = 'image.png'; 
+        link.href = image;
+        document.body.appendChild( link );
+        link.click();
+        document.body.removeChild( link );
+    };
+
 
     app.setPixel = function (x, y, red, green, blue) {
             pixPos = ((~~x) + (~~y)) * 4;
@@ -45,6 +56,7 @@ let init = (app) => {
     }
 
     app.handleMouseDown = function (e) {
+        if(app.vue.pixel_count >= 1) {
             var imgObj = new Image();
             mouseX = e.offsetX;
             mouseY = e.offsetY;
@@ -58,17 +70,18 @@ let init = (app) => {
                     r: app.vue.r,
                     g: app.vue.g,
                     b: app.vue.b,
-                }).then(function (response){
-                    imgObj.src = response.data.image;
-                    imgObj.onload = function() {
-                        app.vue.canvas.drawImage(imgObj, 0, 0);
-                    }
-                });// Add image load here
+                });
+                app.vue.pixel_count = app.vue.pixel_count - 1;
+                console.log(app.vue.pixel_count);
+                axios.post(decr_pixel_count_url, {
+                    pixel_count: app.vue.pixel_count,
+                });
             }
+        }
     }
 
     app.watchColorPicker = function (event) {
-        document.querySelectorAll("canvas").forEach(function(p) {
+        document.querySelectorAll("myCanvas").forEach(function(p) {
             p.style.color = event.target.value;
         });
     }
@@ -82,7 +95,7 @@ let init = (app) => {
     }
 
     app.updateFirst = function (event) {
-        var p = document.querySelector("canvas");
+        var p = document.querySelector("myCanvas");
 
         if (p) {
             p.style.color = event.target.value;
@@ -118,9 +131,6 @@ let init = (app) => {
         });
     }
 
-    app.resetPage = function() {
-        location.reload();
-    }
 
     // This contains all the methods.
     app.methods = {
@@ -131,7 +141,7 @@ let init = (app) => {
         startup: app.startup,
         updateAll: app.updateAll,
         updateFirst: app.updateFirst,
-        resetPage: app.resetPage,
+        download: app.download,
     };
 
     // This creates the Vue instance.
@@ -145,6 +155,9 @@ let init = (app) => {
     app.init = () => {
         // Put here any initialization code.
         // Typically this is a server GET call to load the data.
+        
+        axios.post(add_user_url);
+        
         app.vue.c = document.getElementById("myCanvas");
         app.vue.canvas = app.vue.c.getContext('2d'); // link up recent data url here
         app.vue.w = app.vue.c.width;
@@ -164,6 +177,11 @@ let init = (app) => {
         imgObj.onload = function() {
             app.vue.canvas.drawImage(imgObj, 0, 0);
         }
+
+        axios.get(get_pixel_count_url).then(function (response){
+            app.vue.pixel_count = response.data.pixel_count;
+        });
+
         app.startup();
     };
 

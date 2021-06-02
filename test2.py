@@ -8,6 +8,7 @@ print('connected')
 for i in range (100):
     dbcomm.insertPixel(40, i+100, i+100, i+100, i+100, i+100)
 
+>>>>>>> main
 print('pixel inserted')
 
 out = dbcomm.selectPixelsByUser(40)

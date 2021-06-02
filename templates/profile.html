@@ -1,0 +1,63 @@
+[[extend 'layout.html']]
+
+<div class="section">
+        <p>
+            <a class="button is-link" href="[[=URL('index')]]">
+                <span class="icon"><i class="fa fa-backward"></i></span>
+                <span>Return to the Global Canvas</span>
+            </a>
+        </p>    
+        <p>    
+            <a class="button is-link" href="[[=URL('private')]]">
+                <span class="icon"><i class="fa fa-forward"></i></span>
+                <span>Go to a Private Canvas</span>
+            </a>
+        </p>
+    
+    <div class="container">
+        <h1 style="color:#ffffff" class="title">Welcome to the profile page, [[=username]].</h1>
+        
+        <p style="color:#ffffff">Email: [[=email]]</p>
+        
+        <p style="color:#ffffff">Name: [[=firstname]] [[=lastname]]</p>
+        
+        <!--<a class="button is-link" href="[[=URL('auth/profile')]]">
+            <span>Edit Profile</span>
+        </a>-->
+        
+        <a class="button is-link" href="[[=URL('auth/change_password')]]">
+            <span>Change Password</span>
+        </a>
+        
+        <br></br>
+        
+        <p style="color:#ffffff">You currently have [[=pixelsremaining]] pixels remaining.</p>
+        
+        <p style="color:#ffffff">Your contributions to the Canvas: </p>
+        
+        <div id="vue-target">
+            <canvas id="myCanvas" width="750" height="750"></canvas>
+        </div>
+</div>
+
+<style>
+#myCanvas {
+  border: 1px solid grey;
+}
+</style>
+
+[[block page_scripts]]
+<script>
+  let load_users_image_url = "[[=XML(load_users_image_url)]]";
+  let load_image_url = "[[=XML(load_image_url)]]";
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="js/profile.js"></script>
+[[end]]
+
+
+
+
+
+
+
