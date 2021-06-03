@@ -73,6 +73,8 @@ def index():
         load_image_url=URL('load_image', signer=url_signer),
         set_pixel_url=URL('set_pixel', signer=url_signer),
         add_user_url=URL('add_user', signer=url_signer),
+        decr_pixel_count_url=URL('decr_pixel_count', signer=url_signer),
+        get_pixel_count_url=URL('get_pixel_count', signer=url_signer),
     )
 
 def createImage():
@@ -187,6 +189,31 @@ def load_users_image():
         image=pil_to_dataurl(i),
     )
 
+@action('decr_pixel_count', method=["GET","POST"])
+@action.uses(auth.user, url_signer)
+def decr_pixel_count():
+    commHolder = DBComm('Yotam', '', 'canvasDB')
+    user_email = get_user_email()
+    user = commHolder.selectUserData(user_email)
+    pixel_count = request.json.get('pixel_count')
+    commHolder.setPixelCount(user[0],pixel_count)
+    #pixel_count = user[4]
+    #commHolder.decrementPixelCount(user[0])
+    return dict(
+        #pixel_count=pixel_count,
+    )
+
+@action('get_pixel_count', method=["GET","POST"])
+@action.uses(auth.user, url_signer)
+def get_pixel_count():
+    commHolder = DBComm('Yotam', '', 'canvasDB')
+    user_email = get_user_email()
+    user = commHolder.selectUserData(user_email)
+    pixel_count = user[4]
+    print(pixel_count)
+    return dict(
+        pixel_count=pixel_count,
+    )
 
 # private line canvas
 @action('private')
@@ -240,3 +267,5 @@ def retrieveCheckpoint(checkpointID = None):
         picArray = np.zeros(desc, dtype=np.uint8)
 
     return(picArray)
+
+

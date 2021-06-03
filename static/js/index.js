@@ -56,6 +56,7 @@ let init = (app) => {
     }
 
     app.handleMouseDown = function (e) {
+        if(app.vue.pixel_count >= 1) {
             var imgObj = new Image();
             mouseX = e.offsetX;
             mouseY = e.offsetY;
@@ -69,13 +70,14 @@ let init = (app) => {
                     r: app.vue.r,
                     g: app.vue.g,
                     b: app.vue.b,
-                /*}).then(function (response){          // the set pixel in controllers does not currently return an image
-                    imgObj.src = response.data.image;   // this was causing the strange errors in the console
-                    imgObj.onload = function() {
-                        app.vue.canvas.drawImage(imgObj, 0, 0);
-                    }*/
-                });// Add image load here
+                });
+                app.vue.pixel_count = app.vue.pixel_count - 1;
+                console.log(app.vue.pixel_count);
+                axios.post(decr_pixel_count_url, {
+                    pixel_count: app.vue.pixel_count,
+                });
             }
+        }
     }
 
     app.watchColorPicker = function (event) {
@@ -175,6 +177,11 @@ let init = (app) => {
         imgObj.onload = function() {
             app.vue.canvas.drawImage(imgObj, 0, 0);
         }
+
+        axios.get(get_pixel_count_url).then(function (response){
+            app.vue.pixel_count = response.data.pixel_count;
+        });
+
         app.startup();
     };
 
