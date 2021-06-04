@@ -44,7 +44,8 @@ BUCKET = '/checkpointing'
 GCS_KEY_PATH = os.path.join(APP_FOLDER, 'private/gcs_keys.json')
 PIC_LOC_PATH = os.path.join(APP_FOLDER, 'tmp/')
    
-    
+commHolder = DBComm('Yotam','','canvasDB')
+
 with open(GCS_KEY_PATH) as gcs_key_f:
     GCS_KEY = json.load(gcs_key_f)
 
@@ -63,7 +64,6 @@ def pil_to_dataurl(img):
 @action('index')
 @action.uses(auth.user, url_signer, 'index.html')
 def index():
-    commHolder = DBComm('Yotam','','canvasDB',)
     holder = commHolder.selectPixelMatrix(0)
     width, height = 750, 750
     desc = (height, width, 3)
@@ -81,8 +81,6 @@ def index():
     )
 
 def createImage():
-    commHolder = DBComm('Yotam','','canvasDB',)
-
     checkpointID = commHolder.getLargestID()
     checkpointID = int(math.floor(checkpointID / 500.0)) * 500
     
@@ -113,7 +111,6 @@ def set_image():
     r = request.json.get('r')
     g = request.json.get('g')
     b = request.json.get('b')
-    commHolder = DBComm('Yotam','','canvasDB',)
     currentID = commHolder.getLargestID()
     #print(currentID)
     
@@ -137,7 +134,6 @@ def add_user():
     lastName = auth.current_user.get('last_name') if auth.current_user else None
     pixelCount = 20
     print("adding user")
-    commHolder = DBComm('Yotam','','canvasDB',)
     try:
         commHolder.insertUser(email, firstName, lastName, pixelCount)
         print("user added")
@@ -150,7 +146,6 @@ def add_user():
 @action('profile')
 @action.uses(auth.user, url_signer, 'profile.html')
 def profile():
-    commHolder = DBComm('Yotam','','canvasDB',)
     email = get_user_email()
     username = auth.current_user.get('username') if auth.current_user else None
     firstname = auth.current_user.get('first_name') if auth.current_user else None
@@ -171,7 +166,6 @@ def profile():
 @action('load_users_image')
 @action.uses(url_signer.verify())    
 def load_users_image():
-    commHolder = DBComm('Yotam','','canvasDB',)
     user_email = get_user_email()
     #print(user_email)
     # NEED TO GET ACTUAL USERS INSERTED INTO THE USER TABLE
@@ -195,7 +189,6 @@ def load_users_image():
 @action('decr_pixel_count', method=["GET","POST"])
 @action.uses(auth.user, url_signer)
 def decr_pixel_count():
-    commHolder = DBComm('Yotam', '', 'canvasDB')
     user_email = get_user_email()
     user = commHolder.selectUserData(user_email)
     pixel_count = request.json.get('pixel_count')
@@ -209,7 +202,6 @@ def decr_pixel_count():
 @action('get_pixel_count', method=["GET","POST"])
 @action.uses(auth.user, url_signer)
 def get_pixel_count():
-    commHolder = DBComm('Yotam', '', 'canvasDB')
     user_email = get_user_email()
     user = commHolder.selectUserData(user_email)
     pixel_count = user[4]
@@ -228,7 +220,7 @@ def checkpoint():
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(GCS_KEY)
     client = storage.Client(credentials=credentials, project='collabcanvas')
     bucket = client.get_bucket('checkpointing')
-    commHolder = DBComm('Yotam','','canvasDB')
+     
 
     checkpointID = commHolder.getLargestID()
     checkpointID = int(math.floor(checkpointID / 500.0)) * 500
@@ -253,7 +245,7 @@ def retrieveCheckpoint(checkpointID = None):
     bucket = client.get_bucket('checkpointing')
 
     if(checkpointID==None):
-        commHolder = DBComm('Yotam','','canvasDB')
+         
         checkpointID = commHolder.getLargestID()
         
     checkpointID = (int(math.floor(checkpointID / 500.0)) * 500) 
