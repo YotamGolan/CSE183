@@ -85,9 +85,11 @@ def createImage():
     checkpointID = int(math.floor(checkpointID / 500.0)) * 500
     
 
-    holder = commHolder.selectPixelMatrix(checkpointID)
-
-    mat = retrieveCheckpoint()
+    holder = commHolder.selectPixelMatrix(0)
+    width, height = 750, 750
+    desc = (height, width, 3)
+    mat = np.zeros(desc, dtype=np.uint8)
+    #mat = retrieveCheckpoint()
     
     for row in holder:
         mat[row[3], row[2]] = [row[4], row[5], row[6]]
@@ -97,7 +99,14 @@ def createImage():
 @action('load_image')
 @action.uses(url_signer.verify())
 def load_image():
-    i = createImage()
+    holder = commHolder.selectPixelMatrix(0)
+    width, height = 750, 750
+    desc = (height, width, 3)
+    mat = np.zeros(desc, dtype=np.uint8)
+
+    for row in holder:
+        mat[row[3], row[2]] = [row[4], row[5], row[6]]
+    i = Image.fromarray(mat, "RGB")
     return dict(
         image=pil_to_dataurl(i),
     )
@@ -111,15 +120,15 @@ def set_image():
     r = request.json.get('r')
     g = request.json.get('g')
     b = request.json.get('b')
-    currentID = commHolder.getLargestID()
+    #currentID = commHolder.getLargestID()
     #print(currentID)
-    
+
     #print(x, y, r, g, b)
     id = commHolder.selectUserData(user_email)
     #print(id[0][0])
     commHolder.insertPixel(id[0], x, y, r, g, b)
-    if(currentID%500 == 0):
-        checkpoint()
+    #if(currentID%500 == 0):
+    #    checkpoint()
     message = "success"
     return dict(message=message)
 
