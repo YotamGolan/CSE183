@@ -42,6 +42,9 @@ from numpy import array
 from nqgcs import NQGCS
 BUCKET = '/checkpointing'
 GCS_KEY_PATH = os.path.join(APP_FOLDER, 'private/gcs_keys.json')
+PIC_LOC_PATH = os.path.join(APP_FOLDER, 'tmp/')
+   
+    
 with open(GCS_KEY_PATH) as gcs_key_f:
     GCS_KEY = json.load(gcs_key_f)
 
@@ -237,10 +240,11 @@ def checkpoint():
         imgMatrix[row[3], row[2]] = [row[4], row[5], row[6]]
     tempImage = Image.fromarray(imgMatrix, "RGB")
 
-    tempImage.save(picName)
+    picLoc = PIC_LOC_PATH + picName
+    tempImage.save(picLoc)
     blob = bucket.blob(picName)
-    blob.upload_from_filename(picName)
-    os.remove(picName) 
+    blob.upload_from_filename(picLoc)
+    os.remove(picLoc) 
     return()
 
 def retrieveCheckpoint(checkpointID = None):
@@ -254,13 +258,15 @@ def retrieveCheckpoint(checkpointID = None):
         
     checkpointID = (int(math.floor(checkpointID / 500.0)) * 500) 
     picName = 'checkpoint' + str(checkpointID) +'.png'
+    picLoc = PIC_LOC_PATH + picName
+    
     try: 
         blob = bucket.blob(picName)
-        blob.download_to_filename(picName)
-        image = Image.open(picName)  
+        blob.download_to_filename(picLoc)
+        image = Image.open(picLoc)  
         picArray = array(image)
         image.close()
-        os.remove(picName)
+        os.remove(picLoc)
     except:
         width, height = 750, 750
         desc = (height, width, 3)
