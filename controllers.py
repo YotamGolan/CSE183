@@ -45,7 +45,6 @@ GCS_KEY_PATH = os.path.join(APP_FOLDER, 'private/gcs_keys.json')
 PIC_LOC_PATH = os.path.join(APP_FOLDER, 'tmp/')
 CRED_PATH = os.path.join(APP_FOLDER, "private/credentials.json")
 credentials = json.load(open(CRED_PATH))
-print(credentials['name']+','+credentials['password']+','+credentials['database'])
 commHolder = DBComm(credentials['name'],credentials['password'],credentials['database'])
 
 with open(GCS_KEY_PATH) as gcs_key_f:
