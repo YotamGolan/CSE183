@@ -142,12 +142,9 @@ def add_user():
     firstName = auth.current_user.get('first_name') if auth.current_user else None
     lastName = auth.current_user.get('last_name') if auth.current_user else None
     pixelCount = 20
-    print("adding user")
-    try:
+    userHolder = commHolder.selectUserData(email)
+    if(len(userHolder) == 0):
         commHolder.insertUser(email, firstName, lastName, pixelCount)
-        print("user added")
-    except:
-        print("user already exists")
     
     return dict()
 
