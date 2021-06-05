@@ -134,12 +134,10 @@ def add_user():
     firstName = auth.current_user.get('first_name') if auth.current_user else None
     lastName = auth.current_user.get('last_name') if auth.current_user else None
     pixelCount = 20
-    print("adding user")
-    try:
-        commHolder.insertUser(email, firstName, lastName, pixelCount)
-        print("user added")
-    except:
-        print("user already exists")
+    userHolder = commHolder.selectUserData(email)
+    #print("length is : " + str(len(userHolder)))
+    if(len(userHolder) == 0):
+        commHolder.insertUser(email, firstName, lastName, pixelCount)   
     
     return dict()
 
@@ -246,7 +244,6 @@ def retrieveCheckpoint(checkpointID = None):
     bucket = client.get_bucket('checkpointing')
 
     if(checkpointID==None):
-         
         checkpointID = commHolder.getLargestID()
         
     checkpointID = (int(math.floor(checkpointID / 500.0)) * 500) 
