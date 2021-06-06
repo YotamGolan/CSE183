@@ -1,1 +1,126 @@
-This is our CSE183 Repo
+CollabCanvas
+
+Our application is divided into three pages, all of which require the user to be logged in to access them. 
+The index page, which is loaded first, has the global canvas which all users can contribute to. 
+From there users can navigate to a profile page which displays user information and the user’s current contributions to the global canvas. 
+From the user’s profile page, the user can choose to either navigate back to the global canvas or to a private canvas.
+
+The global canvas allows users to insert pixels of various colors, up to a maximum of 20 per hour, to a canvas that is visible to all users. 
+There is a color picker so that users can easily pick the color pixel they wish to insert,
+and there is a download button that will save the current version of the canvas to the user’s computer as a png.
+
+The private canvas functions a bit differently than the global canvas. 
+Since it is per user it allows the user to draw lines instead of limiting them to one pixel at a time and also does not limit how much they can draw. 
+The private canvas also has a download button which saves it as a png much like the one for the global canvas.
+
+Front End (HTML, JS)
+ 
+index.html
+The website homepage
+
+Features:
+  The global canvas
+    This is the global canvas of CollabCanvas, which displays the current state of the collaborative image. 
+    It can be drawn to after selecting a color from the color picker
+    
+  Color picker
+    Used for selecting the color to be drawn on the global canvas
+    
+  Download image
+    This button will download a .png of the current version of the global canvas
+    
+  Profile
+    By clicking on the user in the top right corner, a drop down menu will appear that gives a choice between going to the profile page and logging out. 
+    Logging out will bring the user back to the login page.
+
+profile.html
+
+Features:
+  User information
+    Displays the user’s username, name, and email address.
+    There is a button that allows the user to edit their password.
+    
+  User’s contributions to the global canvas
+    Below the user information section the site displays an image that shows all of the pixels the user has inserted into the global canvas.
+    The image does not display the additions of any other users.
+    
+  Navigation
+    At the top of the profile page the user is presented with two buttons. 
+    One allows them to return to the global canvas to continue editing or just to look at it. The other allows them to move to their private canvas.
+
+private.html
+The private canvas page
+
+Features:
+  The private canvas
+    This is a tool that lets users create their own drawings independent from the global canvas. 
+    This canvas functions similarly to the global canvas on the homepage and is interactable, 
+    however since it is a private canvas there are no restrictions placed on how much the user is allowed to modify it.
+    Another difference is that the private canvas allows the user to draw whole lines instead of just one pixel at a time.
+    
+  Color Picker
+    A number of buttons allow the user to change the color of their input to the private canvas. 
+    The format is a bit different compared to the global canvas.
+    
+  Download image
+    Just like the global canvas. 
+    The user can click a button to save the image on their private canvas as a png.
+    
+  Profile
+    The same as the global canvas page. 
+    The user can click on the button in the top right corner to show a drop down list which allows them to view their profile or log out of the page.
+
+Back End (Python, SQL)
+
+The back end of this web application communicates with 2 database tables: a users table and a submissions table
+
+Users table
+This database table holds all information regarding user profiles. The structure is as follows:
+
+  userID (int)
+    The ID of the user (unique value, starting from 0 and incrementing by 1 for every user inserted)
+    
+  email (string)
+    The user’s email address. Used as a username and a key for accessing user data
+    
+  firstName (string)
+    The user’s first name
+    
+  lastName (string)
+    The user’s last name
+    
+  pixelCount (int)
+    The number of pixels this user has left to add to the global canvas
+
+Submissions table
+This database holds each pixel that has been entered into the global canvas. The structure is as follows:
+
+  submissionID (int)
+    The ID of the pixel (unique value, starting from 0 and incrementing by 1 for every pixel inserted)
+    
+  userID (int)
+    This is a reference to the userID of the user that submitted this pixel entry. 
+    It is linked to the userID field in the users table, so a user with a matching userID must exist before inserting a pixel
+    
+  xCoord (int)
+    The x coordinate of the pixel on the global canvas
+    
+  yCoord (int)
+    The y coordinate of the pixel on the global canvas
+    
+  rValue (unsigned int, < 256)
+    The red value of the pixel
+    
+  gValue (unsigned int, < 256)
+    The green value of the pixel
+    
+  bValue (unsigned int, < 256)
+    The blue value of the pixel
+
+Miscellaneous Features
+
+Checkpointing:
+A checkpointing system has been implemented to improve overall website performance. 
+Every 500 submissions to the global canvas, a screenshot is taken of the canvas and added to blob storage. 
+This way, instead of loading every pixel from history every time the global canvas is loaded, 
+the canvas can start from one of these checkpoints and build off of it with the remaining pixel entries.
