@@ -1,4 +1,4 @@
-timestamp: 2021-03-31T08:16:48.383358
+timestamp: 2021-06-05T16:54:27.453386
 CREATE TABLE "auth_user"(
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "username" CHAR(512) UNIQUE,
@@ -12,14 +12,14 @@ CREATE TABLE "auth_user"(
     "past_passwords_hash" TEXT
 );
 success!
-timestamp: 2021-03-31T08:16:48.397355
+timestamp: 2021-06-05T16:54:27.482347
 CREATE TABLE "auth_user_tag_groups"(
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "path" CHAR(512),
     "record_id" INTEGER REFERENCES "auth_user" ("id") ON DELETE CASCADE  
 );
 success!
-timestamp: 2021-05-31T15:56:14.343675
+timestamp: 2021-06-05T16:54:27.500673
 CREATE TABLE "upload"(
     "id" INTEGER PRIMARY KEY AUTOINCREMENT,
     "file_name" CHAR(512),
