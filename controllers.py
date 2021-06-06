@@ -27,7 +27,7 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
-from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
+from .common import db, session, T, cache, auth, logger , flash
 from .dbcomm import *
 import numpy as np
 from py4web.utils.url_signer import URLSigner
@@ -135,7 +135,6 @@ def add_user():
     lastName = auth.current_user.get('last_name') if auth.current_user else None
     pixelCount = 20
     userHolder = commHolder.selectUserData(email)
-    #print("length is : " + str(len(userHolder)))
     if(len(userHolder) == 0):
         commHolder.insertUser(email, firstName, lastName, pixelCount)   
     
