@@ -71,6 +71,8 @@ def index():
     for row in holder:
         mat[row[2], row[3]] = [row[4],row[5],row[6]]
     i = Image.fromarray(mat, "RGB")
+    user = commHolder.selectUserData(get_user_email())
+    pixelsremaining = user[4]
     #i.show()
     return dict(
         load_image_url=URL('load_image', signer=url_signer),
@@ -78,6 +80,7 @@ def index():
         add_user_url=URL('add_user', signer=url_signer),
         decr_pixel_count_url=URL('decr_pixel_count', signer=url_signer),
         get_pixel_count_url=URL('get_pixel_count', signer=url_signer),
+        pixelsremaining=pixelsremaining,
     )
 
 def createImage():
@@ -111,7 +114,7 @@ def load_image():
         image=pil_to_dataurl(i),
     )
 
-@action('set_pixel', method="POST")
+@action('set_pixel', method=["GET", "POST"])
 @action.uses(url_signer.verify())
 def set_image():
     user_email = get_user_email()
@@ -128,9 +131,9 @@ def set_image():
     #print(id[0][0])
     commHolder.insertPixel(id[0], x, y, r, g, b)
     #if(currentID%500 == 0):
+    pixelsremaining = id[4]
     #    checkpoint()
-    message = "success"
-    return dict(message=message)
+    return dict(pixelsremaining=pixelsremaining)
 
 @action('add_user', method=["GET","POST"])
 @action.uses(url_signer.verify())

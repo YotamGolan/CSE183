@@ -13,7 +13,7 @@ APP_FOLDER = os.path.dirname(__file__)
 APP_NAME = os.path.split(APP_FOLDER)[-1]
 # DB_FOLDER:    Sets the place where migration files will be created
 #               and is the store location for SQLite databases
-DB_FOLDER = required_folder(APP_FOLDER, "databases")
+DB_FOLDER = required_folder(APP_FOLDER, "tmp")
 DB_URI = "sqlite://storage.db"
 DB_POOL_SIZE = 1
 DB_MIGRATE = True
@@ -26,7 +26,7 @@ STATIC_FOLDER = required_folder(APP_FOLDER, "static")
 UPLOAD_FOLDER = required_folder(APP_FOLDER, "tmp")
 
 # send email on regstration
-VERIFY_EMAIL = True
+VERIFY_EMAIL = False
 
 # account requires to be approved ?
 REQUIRES_APPROVAL = False
