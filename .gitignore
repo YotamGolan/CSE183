@@ -1,2 +1,4 @@
 private/*
 __pycache__/*
+private/gcs_keys.json
+private/credentials.json
